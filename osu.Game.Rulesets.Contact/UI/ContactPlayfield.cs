@@ -8,13 +8,14 @@ using osu.Game.Rulesets.Contact.Objects.Controller;
 using osu.Game.Rulesets.Contact.Scenes;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using osu.Game.Rulesets.Contact.Objects.Shapes;
 
 namespace osu.Game.Rulesets.Contact.UI;
 
 [Cached]
 public partial class ContactPlayfield : Playfield
 {
-    public const int SIZE = 10000;
+    public const int SIZE = 500000;
     private readonly Container viewPort;
 
     private ControllerArea controllerArea { get; }
@@ -35,6 +36,13 @@ public partial class ContactPlayfield : Playfield
         });
 
         AddInternal(viewPort);
+
+        AddInternal(new TestCirc
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Size = new Vector2(20),
+        });
     }
 
     protected override void Update()
