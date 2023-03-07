@@ -50,8 +50,10 @@ namespace osu.Game.Rulesets.Contact
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
-            new KeyBinding(InputKey.Z, ContactAction.Button1),
-            new KeyBinding(InputKey.X, ContactAction.Button2),
+            new KeyBinding(InputKey.A, ContactAction.Button1),
+            new KeyBinding(InputKey.D, ContactAction.Button2),
+            new KeyBinding(InputKey.W, ContactAction.Button3),
+            new KeyBinding(InputKey.S, ContactAction.Button4),
         };
 
         public override Drawable CreateIcon() => new Icon(ShortName[0]);
