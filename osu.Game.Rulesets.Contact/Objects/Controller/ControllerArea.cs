@@ -1,10 +1,8 @@
 using System;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Contact.UI;
 using osuTK;
 
@@ -12,7 +10,7 @@ namespace osu.Game.Rulesets.Contact.Objects.Controller;
 
 public partial class ControllerArea : Container, IKeyBindingHandler<ContactAction>
 {
-    private readonly ControllerContainer controllerContainer;
+    public ControllerContainer ControllerContainer { get; }
 
     public int HorizontalCheck;
     public int VerticalCheck;
@@ -22,27 +20,11 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         Size = new Vector2(ContactPlayfield.SIZE);
+        Depth = float.MinValue;
 
         AddRange(new Drawable[]
         {
-            controllerContainer = new ControllerContainer(),
-
-            new Container
-            {
-                Colour = Colour4.White,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Masking = true,
-                MaskingSmoothness = 0,
-                BorderColour = Colour4.Red,
-                BorderThickness = 5,
-                Size = new Vector2(10010),
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.Transparent
-                }
-            }
+            ControllerContainer = new ControllerContainer(),
         });
     }
 
@@ -105,37 +87,32 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
             _ => ySpeed
         };
 
-        var newPos = controllerContainer.Position + new Vector2(xSpeed, ySpeed) * new Vector2((float)(Clock.ElapsedFrameTime / 1000f));
+        var newPos = ControllerContainer.Position + new Vector2(xSpeed, ySpeed) * new Vector2((float)(Clock.ElapsedFrameTime / 1000f));
 
         if (HorizontalCheck == 0)
         {
-            newPos.X = controllerContainer.Position.X;
+            newPos.X = ControllerContainer.Position.X;
         }
 
-        controllerContainer.MoveTo(newPos);
+        if (HorizontalCheck != 0 || VerticalCheck != 0)
+        {
+            ControllerContainer.FadeColour(Colour4.Blue, 300);
+        }
+        else
+        {
+            ControllerContainer.FadeColour(Colour4.White, 300);
+        }
+
+        ControllerContainer.MoveTo(newPos);
 
         clampToPlayfield();
-        moveViewPort();
 
         base.Update();
     }
 
     private void clampToPlayfield()
     {
-        controllerContainer.MoveToX(Math.Clamp(controllerContainer.Position.X, -ContactPlayfield.SIZE / 2f + controllerContainer.Width / 2, ContactPlayfield.SIZE / 2f - controllerContainer.Width / 2));
-        controllerContainer.MoveToY(Math.Clamp(controllerContainer.Position.Y, -ContactPlayfield.SIZE / 2f + controllerContainer.Width / 2, ContactPlayfield.SIZE / 2f - controllerContainer.Width / 2));
-    }
-
-    private void moveViewPort() =>
-        easeTo(this, -controllerContainer.Position);
-
-    private void easeTo(Drawable drawable, Vector2 destination)
-    {
-        double dampLength = Interpolation.Lerp(3000, 40, 0.95);
-
-        float x = (float)Interpolation.DampContinuously(drawable.X, destination.X, dampLength, Clock.ElapsedFrameTime);
-        float y = (float)Interpolation.DampContinuously(drawable.Y, destination.Y, dampLength, Clock.ElapsedFrameTime);
-
-        drawable.Position = new Vector2(x, y);
+        ControllerContainer.MoveToX(Math.Clamp(ControllerContainer.Position.X, -ContactPlayfield.SIZE / 2f + ControllerContainer.Width / 2, ContactPlayfield.SIZE / 2f - ControllerContainer.Width / 2));
+        ControllerContainer.MoveToY(Math.Clamp(ControllerContainer.Position.Y, -ContactPlayfield.SIZE / 2f + ControllerContainer.Width / 2, ContactPlayfield.SIZE / 2f - ControllerContainer.Width / 2));
     }
 }
