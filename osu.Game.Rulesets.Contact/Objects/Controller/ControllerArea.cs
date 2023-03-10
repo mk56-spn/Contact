@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Contact.Objects.Controller;
 
 public partial class ControllerArea : Container, IKeyBindingHandler<ContactAction>
 {
-    public ControllerContainer ControllerContainer { get; }
+    public Controller Controller { get; }
 
     public int HorizontalCheck;
     public int VerticalCheck;
@@ -24,7 +24,7 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
 
         AddRange(new Drawable[]
         {
-            ControllerContainer = new ControllerContainer(),
+            Controller = new Controller(),
         });
     }
 
@@ -87,23 +87,23 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
             _ => ySpeed
         };
 
-        var newPos = ControllerContainer.Position + new Vector2(xSpeed, ySpeed) * new Vector2((float)(Clock.ElapsedFrameTime / 1000f));
+        var newPos = Controller.Position + new Vector2(xSpeed, ySpeed) * new Vector2((float)(Clock.ElapsedFrameTime / 1000f));
 
         if (HorizontalCheck == 0)
         {
-            newPos.X = ControllerContainer.Position.X;
+            newPos.X = Controller.Position.X;
         }
 
         if (HorizontalCheck != 0 || VerticalCheck != 0)
         {
-            ControllerContainer.FadeColour(Colour4.Blue, 300);
+            Controller.FadeColour(Colour4.Blue, 300);
         }
         else
         {
-            ControllerContainer.FadeColour(Colour4.White, 300);
+            Controller.FadeColour(Colour4.White, 300);
         }
 
-        ControllerContainer.MoveTo(newPos);
+        Controller.MoveTo(newPos);
 
         clampToPlayfield();
 
@@ -112,7 +112,7 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
 
     private void clampToPlayfield()
     {
-        ControllerContainer.MoveToX(Math.Clamp(ControllerContainer.Position.X, -ContactPlayfield.SIZE / 2f + ControllerContainer.Width / 2, ContactPlayfield.SIZE / 2f - ControllerContainer.Width / 2));
-        ControllerContainer.MoveToY(Math.Clamp(ControllerContainer.Position.Y, -ContactPlayfield.SIZE / 2f + ControllerContainer.Width / 2, ContactPlayfield.SIZE / 2f - ControllerContainer.Width / 2));
+        Controller.MoveToX(Math.Clamp(Controller.Position.X, -ContactPlayfield.SIZE / 2f + Controller.Width / 2, ContactPlayfield.SIZE / 2f - Controller.Width / 2));
+        Controller.MoveToY(Math.Clamp(Controller.Position.Y, -ContactPlayfield.SIZE / 2f + Controller.Width / 2, ContactPlayfield.SIZE / 2f - Controller.Width / 2));
     }
 }
