@@ -3,18 +3,27 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace osu.Game.Rulesets.Contact.Objects.Shapes;
 
-public partial class Polygon : Drawable
+public partial class Polygon : Sprite
 {
     private IShader shader = null!;
 
     [BackgroundDependencyLoader]
     private void load(ShaderManager shaderManager)
     {
-        shader = shaderManager.Load(VertexShaderDescriptor.TEXTURE_2, "PolygonShader");
+        shader = shaderManager.Load(VertexShaderDescriptor.TEXTURE_2, "MovingPolygon");
+    }
+
+    private float iTime;
+
+    protected override void Update()
+    {
+        base.Update();
+        iTime += (float)(Clock.ElapsedFrameTime / 1000f);
     }
 
     protected override DrawNode CreateDrawNode() => new ShaderCDrawNode(this);
@@ -30,7 +39,6 @@ public partial class Polygon : Drawable
 
         private IShader shader;
         private Vector2 drawSize;
-        private Vector4 colour;
 
         public override void ApplyState()
         {
@@ -38,8 +46,6 @@ public partial class Polygon : Drawable
 
             shader = Source.shader;
             drawSize = Source.DrawSize;
-
-            colour = new Vector4(0.3f, 0.5f, 0.2f, 1);
         }
 
         public override void Draw(IRenderer renderer)
@@ -47,6 +53,8 @@ public partial class Polygon : Drawable
             base.Draw(renderer);
 
             shader.Bind();
+
+            shader.GetUniform<float>("iTime").UpdateValue(ref Source.iTime);
 
             Quad quad = new Quad(
                 Vector2Extensions.Transform(Vector2.Zero, DrawInfo.Matrix),
