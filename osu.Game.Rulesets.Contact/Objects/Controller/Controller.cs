@@ -5,23 +5,25 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Contact.Objects.Controller;
 
-public partial class ControllerContainer : Container
+public partial class Controller : Container
 {
     public const int CONTROLLER_SIZE = 100;
 
-    public ControllerContainer()
+    public Vector2 PositionOld;
+    public Vector2 Acceleration;
+
+    public Controller()
     {
         CornerRadius = 20;
         Masking = true;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-
-        Add(new Box
+        Child = new Box
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             RelativeSizeAxes = Axes.Both,
-        });
+        };
         Size = new Vector2(CONTROLLER_SIZE);
     }
 }
