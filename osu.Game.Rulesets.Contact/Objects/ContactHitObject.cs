@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Contact.Objects
 {
     public class ContactHitObject : HitObject, IHasPosition
     {
-        public override Judgement CreateJudgement() => new Judgement();
+        public override Judgement CreateJudgement() => new();
 
         public Vector2 Position { get; set; }
 
