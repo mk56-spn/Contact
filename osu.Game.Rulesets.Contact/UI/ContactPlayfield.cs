@@ -16,7 +16,6 @@ public partial class ContactPlayfield : Playfield
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        ControllerArea = new ControllerArea();
-        AddInternal(ViewPort = new ViewPort());
+        InternalChild = ViewPort = new ViewPort(ControllerArea = new ControllerArea());
     }
 }
