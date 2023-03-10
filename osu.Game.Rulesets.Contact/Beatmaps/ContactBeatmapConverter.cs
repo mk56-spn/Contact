@@ -27,8 +27,8 @@ namespace osu.Game.Rulesets.Contact.Beatmaps
             yield return new ContactHitObject
             {
                 Samples = original.Samples,
-                StartTime = original.StartTime,
-                Position = (original as IHasPosition)?.Position ?? Vector2.Zero,
+                StartTime = float.MinValue,
+                Position = (original as IHasPosition)?.Position * 100 ?? Vector2.Zero,
             };
         }
     }
