@@ -2,11 +2,13 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.ComponentModel;
+using osu.Framework.Allocation;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Contact
 {
+    [Cached]
     public partial class ContactInputManager : RulesetInputManager<ContactAction>
     {
         public ContactInputManager(RulesetInfo ruleset)

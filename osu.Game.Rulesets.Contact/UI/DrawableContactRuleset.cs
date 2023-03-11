@@ -30,6 +30,6 @@ namespace osu.Game.Rulesets.Contact.UI
 
         public override DrawableHitObject<ContactHitObject> CreateDrawableRepresentation(ContactHitObject h) => new DrawableContactHitObject(h);
 
-        protected override PassThroughInputManager CreateInputManager() => new ContactInputManager(Ruleset?.RulesetInfo);
+        protected override PassThroughInputManager CreateInputManager() => new ContactInputManager(Ruleset.RulesetInfo);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
@@ -17,6 +18,9 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
 
     public ControllerArea()
     {
+        Masking = true;
+        BorderThickness = 3;
+        MaskingSmoothness = 10;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         Size = new Vector2(ContactPlayfield.SIZE);
@@ -26,6 +30,12 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
         {
             Controller = new Controller(),
         });
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ContactPlayfield contactPlayfield)
+    {
+        Add(contactPlayfield.HitObjectContainer);
     }
 
     public bool OnPressed(KeyBindingPressEvent<ContactAction> e)
@@ -89,19 +99,7 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
 
         var newPos = Controller.Position + new Vector2(xSpeed, ySpeed) * new Vector2((float)(Clock.ElapsedFrameTime / 1000f));
 
-        if (HorizontalCheck == 0)
-        {
-            newPos.X = Controller.Position.X;
-        }
-
-        if (HorizontalCheck != 0 || VerticalCheck != 0)
-        {
-            Controller.FadeColour(Colour4.Blue, 300);
-        }
-        else
-        {
-            Controller.FadeColour(Colour4.White, 300);
-        }
+        Controller.FadeColour(HorizontalCheck != 0 || VerticalCheck != 0 ? Colour4.Blue : Colour4.White, 300);
 
         Controller.MoveTo(newPos);
 

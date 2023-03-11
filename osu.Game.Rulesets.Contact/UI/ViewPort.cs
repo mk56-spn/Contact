@@ -1,5 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Extensions.PolygonExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.Contact.Objects.Controller;
 using osu.Game.Rulesets.Contact.Objects.Drawables;
@@ -14,6 +21,9 @@ namespace osu.Game.Rulesets.Contact.UI;
 public partial class ViewPort : Container
 {
     private readonly ControllerArea controllerArea;
+    private readonly List<Box> boxes = new();
+
+    private bool CollisionColours = false;
 
     public ViewPort(ControllerArea controllerArea)
     {
@@ -26,11 +36,67 @@ public partial class ViewPort : Container
         {
             new ContactBorder(),
             new Scene(),
-            this.controllerArea
+            this.controllerArea,
         };
+
+        const int amount = ContactPlayfield.SIZE / 200;
+
+        foreach (int _ in Enumerable.Range(0, 2000))
+        {
+            boxes.Add(new Box
+                {
+                    Size = new Vector2(RNG.NextSingle(20, 100)),
+                    Position = new Vector2(RNG.Next(-amount, amount), RNG.Next(-amount, amount)),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                }
+            );
+        }
+
+        AddRangeInternal(boxes);
     }
 
-    protected override void Update() => moveViewPort();
+    protected override void Update()
+    {
+        moveViewPort();
+
+        foreach (var box in Children.OfType<Box>())
+        {
+            bool collide = box.ScreenSpaceDrawQuad.Intersects(controllerArea.Controller.ScreenSpaceDrawQuad);
+
+            if (CollisionColours)
+            {
+                box.FadeColour(collide ? ColourInfo.GradientVertical(Colour4.Green, Colour4.DarkGreen) : Colour4.Red);
+                return;
+            }
+
+            float distance = Vector2.Distance(controllerArea.Controller.Position, box.Position);
+
+            Colour4 hslCOl = Colour4.FromHSL(0, 0, 3 / (1 + distance / 20));
+
+            box.FadeColour(hslCOl * controllerArea.Controller.Colour.TopLeft.Linear.ToLinear());
+
+            if (!collide) return;
+
+            // Calculate the direction in which to push rectangle2 away from rectangle1
+            Vector2 direction = (box.Position - controllerArea.Controller.Position).Normalized();
+
+            // Push rectangle2 away from rectangle1 in the calculated direction
+            float pushDistance = (controllerArea.Controller.Size.X + box.Size.X) / 2 - (box.Position - controllerArea.Controller.Position).Length;
+            // Push rectangle2 away from rectangle1 in the calculated direction and distance
+            box.MoveTo(box.Position + direction * pushDistance);
+        }
+
+        controllerArea.Controller.EdgeEffect = new EdgeEffectParameters
+        {
+            Radius = 500,
+            Roundness = 50,
+            Type = EdgeEffectType.Glow,
+            Colour = controllerArea.Controller.Colour.TopLeft.Linear.Opacity(0.25f),
+        };
+
+        controllerArea.Controller.RotateTo((float)(controllerArea.Controller.Rotation + Clock.ElapsedFrameTime / 1000 * 0));
+    }
 
     private void moveViewPort() =>
         easeTo(this, -controllerArea.Controller.Position);

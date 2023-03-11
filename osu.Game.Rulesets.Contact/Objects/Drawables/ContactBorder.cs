@@ -1,5 +1,4 @@
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Contact.UI;
@@ -25,13 +24,7 @@ public partial class ContactBorder : Container
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = new ColourInfo
-            {
-                TopLeft = Colour4.YellowGreen,
-                TopRight = Colour4.Crimson,
-                BottomLeft = Colour4.Aquamarine.Darken(0.3f),
-                BottomRight = Colour4.MediumPurple,
-            }
+            Colour = Colour4.Black
         };
     }
 }
