@@ -66,25 +66,18 @@ public partial class ViewPort : Container
 
             if (CollisionColours)
             {
-                box.FadeColour(collide ? ColourInfo.GradientVertical(Colour4.Green, Colour4.DarkGreen) : Colour4.Red);
+                box.Colour = collide ? ColourInfo.GradientVertical(Colour4.Green, Colour4.DarkGreen) : Colour4.Red;
                 return;
             }
+
+            if (collide)
+                onCollide(box);
 
             float distance = Vector2.Distance(controllerArea.Controller.Position, box.Position);
 
             Colour4 hslCOl = Colour4.FromHSL(0, 0, 3 / (1 + distance / 20));
 
-            box.FadeColour(hslCOl * controllerArea.Controller.Colour.TopLeft.Linear.ToLinear());
-
-            if (!collide) return;
-
-            // Calculate the direction in which to push rectangle2 away from rectangle1
-            Vector2 direction = (box.Position - controllerArea.Controller.Position).Normalized();
-
-            // Push rectangle2 away from rectangle1 in the calculated direction
-            float pushDistance = (controllerArea.Controller.Size.X + box.Size.X) / 2 - (box.Position - controllerArea.Controller.Position).Length;
-            // Push rectangle2 away from rectangle1 in the calculated direction and distance
-            box.MoveTo(box.Position + direction * pushDistance);
+            box.Colour = hslCOl * controllerArea.Controller.Colour.TopLeft.Linear.ToLinear();
         }
 
         controllerArea.Controller.EdgeEffect = new EdgeEffectParameters
@@ -96,6 +89,17 @@ public partial class ViewPort : Container
         };
 
         controllerArea.Controller.RotateTo((float)(controllerArea.Controller.Rotation + Clock.ElapsedFrameTime / 1000 * 0));
+    }
+
+    private void onCollide(Box box)
+    {
+        // Calculate the direction in which to push rectangle2 away from rectangle1
+        Vector2 direction = (box.Position - controllerArea.Controller.Position).Normalized();
+
+        // Push rectangle2 away from rectangle1 in the calculated direction
+        float pushDistance = (controllerArea.Controller.Size.X + box.Size.X) / 2 - (box.Position - controllerArea.Controller.Position).Length;
+        // Push rectangle2 away from rectangle1 in the calculated direction and distance
+        box.MoveTo(box.Position + direction * pushDistance);
     }
 
     private void moveViewPort() =>
