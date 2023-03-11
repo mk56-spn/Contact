@@ -3,7 +3,9 @@ using System.Linq;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.PolygonExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.Contact.Objects.Controller;
@@ -20,6 +22,8 @@ public partial class ViewPort : Container
 {
     private readonly ControllerArea controllerArea;
     private readonly List<Box> boxes = new();
+
+    private bool CollisionColours = false;
 
     public ViewPort(ControllerArea controllerArea)
     {
@@ -60,33 +64,36 @@ public partial class ViewPort : Container
         {
             bool collide = box.ScreenSpaceDrawQuad.Intersects(controllerArea.Controller.ScreenSpaceDrawQuad);
 
-            /* box.FadeColour(collide ? ColourInfo.GradientVertical(Colour4.Green, Colour4.DarkGreen) : Colour4.Red);*/
+            if (CollisionColours)
+            {
+                box.FadeColour(collide ? ColourInfo.GradientVertical(Colour4.Green, Colour4.DarkGreen) : Colour4.Red);
+                return;
+            }
+
+            float distance = Vector2.Distance(controllerArea.Controller.Position, box.Position);
+
+            Colour4 hslCOl = Colour4.FromHSL(0, 0, 3 / (1 + distance / 20));
+
+            box.FadeColour(hslCOl * controllerArea.Controller.Colour.TopLeft.Linear.ToLinear());
+
+            if (!collide) return;
 
             // Calculate the direction in which to push rectangle2 away from rectangle1
             Vector2 direction = (box.Position - controllerArea.Controller.Position).Normalized();
 
             // Push rectangle2 away from rectangle1 in the calculated direction
-            if (collide)
-            {
-                float distance = (controllerArea.Controller.Size.X + box.Size.X) / 2 - (box.Position - controllerArea.Controller.Position).Length;
-                // Push rectangle2 away from rectangle1 in the calculated direction and distance
-                box.MoveTo(box.Position + direction * distance);
-            }
-
-            float dist = Vector2.Distance(controllerArea.Controller.Position, box.Position);
-
-            Colour4 hslCOl = Colour4.FromHSL(0, 0, 3 / (1 + dist / 20));
-
-            box.FadeColour(hslCOl * controllerArea.Controller.Colour.TopLeft.Linear.ToLinear());
+            float pushDistance = (controllerArea.Controller.Size.X + box.Size.X) / 2 - (box.Position - controllerArea.Controller.Position).Length;
+            // Push rectangle2 away from rectangle1 in the calculated direction and distance
+            box.MoveTo(box.Position + direction * pushDistance);
         }
 
-        /*controllerArea.Controller.EdgeEffect = new EdgeEffectParameters
+        controllerArea.Controller.EdgeEffect = new EdgeEffectParameters
         {
             Radius = 500,
             Roundness = 50,
             Type = EdgeEffectType.Glow,
             Colour = controllerArea.Controller.Colour.TopLeft.Linear.Opacity(0.25f),
-        };*/
+        };
 
         controllerArea.Controller.RotateTo((float)(controllerArea.Controller.Rotation + Clock.ElapsedFrameTime / 1000 * 0));
     }
