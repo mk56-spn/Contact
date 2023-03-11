@@ -1,20 +1,16 @@
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Game.Graphics.Containers;
 using osuTK;
 
 namespace osu.Game.Rulesets.Contact.Objects.Controller;
 
-public partial class Controller : Container
+public partial class Controller : BeatSyncedContainer
 {
     public const int CONTROLLER_SIZE = 100;
 
-    public Vector2 PositionOld;
-    public Vector2 Acceleration;
-
     public Controller()
     {
-        CornerRadius = 20;
         Masking = true;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
