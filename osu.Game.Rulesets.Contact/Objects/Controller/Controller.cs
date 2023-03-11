@@ -1,5 +1,8 @@
+using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics.Containers;
 using osuTK;
 
@@ -21,5 +24,16 @@ public partial class Controller : BeatSyncedContainer
             RelativeSizeAxes = Axes.Both,
         };
         Size = new Vector2(CONTROLLER_SIZE);
+    }
+
+    protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
+    {
+        base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
+
+        ColourInfo colour = Colour;
+
+        this.FadeColour(Colour * Colour4.White)
+            .Then()
+            .FadeColour(colour);
     }
 }
