@@ -1,4 +1,5 @@
 using System;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
@@ -26,6 +27,12 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
         {
             Controller = new Controller(),
         });
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ContactPlayfield contactPlayfield)
+    {
+        Add(contactPlayfield.HitObjectContainer);
     }
 
     public bool OnPressed(KeyBindingPressEvent<ContactAction> e)
