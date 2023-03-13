@@ -46,14 +46,14 @@ namespace osu.Game.Rulesets.Contact
             }
         }
 
-        public override string ShortName => "contactruleset";
+        public override string ShortName => "contact ruleset";
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
-            new KeyBinding(InputKey.A, ContactAction.Button1),
-            new KeyBinding(InputKey.D, ContactAction.Button2),
-            new KeyBinding(InputKey.W, ContactAction.Button3),
-            new KeyBinding(InputKey.S, ContactAction.Button4),
+            new KeyBinding(InputKey.A, ContactAction.Left),
+            new KeyBinding(InputKey.D, ContactAction.Right),
+            new KeyBinding(InputKey.W, ContactAction.Up),
+            new KeyBinding(InputKey.S, ContactAction.Down),
         };
 
         public override Drawable CreateIcon() => new Icon(ShortName[0]);
