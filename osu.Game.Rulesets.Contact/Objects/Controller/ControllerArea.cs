@@ -42,19 +42,19 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
     {
         switch (e.Action)
         {
-            case ContactAction.Button1:
+            case ContactAction.Left:
                 HorizontalCheck--;
                 break;
 
-            case ContactAction.Button2:
+            case ContactAction.Right:
                 HorizontalCheck++;
                 break;
 
-            case ContactAction.Button3:
+            case ContactAction.Up:
                 VerticalCheck--;
                 break;
 
-            case ContactAction.Button4:
+            case ContactAction.Down:
                 VerticalCheck++;
                 break;
         }
@@ -66,12 +66,12 @@ public partial class ControllerArea : Container, IKeyBindingHandler<ContactActio
     {
         switch (e.Action)
         {
-            case ContactAction.Button1 or ContactAction.Button2:
-                HorizontalCheck = e.Action == ContactAction.Button1 ? HorizontalCheck + 1 : HorizontalCheck - 1;
+            case ContactAction.Left or ContactAction.Right:
+                HorizontalCheck = e.Action == ContactAction.Left ? HorizontalCheck + 1 : HorizontalCheck - 1;
                 break;
 
-            case ContactAction.Button3 or ContactAction.Button4:
-                VerticalCheck = e.Action == ContactAction.Button3 ? VerticalCheck + 1 : VerticalCheck - 1;
+            case ContactAction.Up or ContactAction.Down:
+                VerticalCheck = e.Action == ContactAction.Up ? VerticalCheck + 1 : VerticalCheck - 1;
                 break;
         }
     }

@@ -20,15 +20,15 @@ namespace osu.Game.Rulesets.Contact
     public enum ContactAction
     {
         [Description("left")]
-        Button1,
+        Left,
 
         [Description("right")]
-        Button2,
+        Right,
 
         [Description("up")]
-        Button3,
+        Up,
 
         [Description("down")]
-        Button4
+        Down
     }
 }
