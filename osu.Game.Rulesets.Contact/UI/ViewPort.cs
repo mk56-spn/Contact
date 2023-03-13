@@ -1,9 +1,8 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using osu.Framework.Extensions.Color4Extensions;
-using osu.Framework.Extensions.PolygonExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
@@ -23,7 +22,7 @@ public partial class ViewPort : Container
     private readonly ControllerArea controllerArea;
     private readonly List<Box> boxes = new();
 
-    private bool CollisionColours = false;
+    public bool CollisionColours = false;
 
     public ViewPort(ControllerArea controllerArea)
     {
@@ -56,22 +55,21 @@ public partial class ViewPort : Container
         AddRangeInternal(boxes);
     }
 
-    protected override void Update()
+    protected override void UpdateAfterChildren()
     {
+        base.UpdateAfterChildren();
         moveViewPort();
 
         foreach (var box in Children.OfType<Box>())
         {
-            bool collide = box.ScreenSpaceDrawQuad.Intersects(controllerArea.Controller.ScreenSpaceDrawQuad);
-
-            if (CollisionColours)
+            if (box.BoundingBox.IntersectsWith(controllerArea.Controller.BoundingBox))
             {
-                box.Colour = collide ? ColourInfo.GradientVertical(Colour4.Green, Colour4.DarkGreen) : Colour4.Red;
-                return;
-            }
+                // The rectangles intersect. Calculate the minimum distance needed to move them apart.
+                var intersection = RectangleF.Intersect(box.BoundingBox, controllerArea.Controller.BoundingBox);
 
-            if (collide)
-                onCollide(box);
+                // Move the rectangles apart by changing their positions.
+                controllerArea.Controller.Position = box.Position + new Vector2(0, -box.Height / 2f);
+            }
 
             float distance = Vector2.Distance(controllerArea.Controller.Position, box.Position);
 
@@ -88,7 +86,7 @@ public partial class ViewPort : Container
             Colour = controllerArea.Controller.Colour.TopLeft.Linear.Opacity(0.25f),
         };
 
-        controllerArea.Controller.RotateTo((float)(controllerArea.Controller.Rotation + Clock.ElapsedFrameTime / 1000 * 0));
+        controllerArea.Controller.Rotation = (float)(controllerArea.Controller.Rotation + Clock.ElapsedFrameTime / 1000 * 0);
     }
 
     private void onCollide(Box box)
@@ -99,7 +97,7 @@ public partial class ViewPort : Container
         // Push rectangle2 away from rectangle1 in the calculated direction
         float pushDistance = (controllerArea.Controller.Size.X + box.Size.X) / 2 - (box.Position - controllerArea.Controller.Position).Length;
         // Push rectangle2 away from rectangle1 in the calculated direction and distance
-        box.MoveTo(box.Position + direction * pushDistance);
+        box.Position = box.Position + direction * pushDistance;
     }
 
     private void moveViewPort() =>

@@ -26,14 +26,21 @@ public partial class Controller : BeatSyncedContainer
         Size = new Vector2(CONTROLLER_SIZE);
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Position = new Vector2(0, -1000);
+    }
+
     protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
     {
         base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
 
         ColourInfo colour = Colour;
 
-        this.FadeColour(Colour * Colour4.White)
+        this.FadeColour(Colour * Colour4.White, 300)
             .Then()
-            .FadeColour(colour);
+            .FadeColour(colour, 300);
     }
 }
